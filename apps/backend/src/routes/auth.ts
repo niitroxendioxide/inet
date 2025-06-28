@@ -27,11 +27,16 @@ router.post(
     body('password').isLength({ min: 6 }),
     body('name').notEmpty(),
   ],
-  async (req: Request<{}, {}, RegisterRequest	>, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request<{}, {}, RegisterRequest>, res: Response, next: NextFunction): Promise<void> => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        throw new AppError(400, 'Invalid input data');
+        // Return detailed validation errors
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid input data',
+          errors: errors.array()
+        });
       }
 
       const { email, password, name } = req.body;
@@ -92,7 +97,12 @@ router.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        throw new AppError(400, 'Invalid input data');
+        // Return detailed validation errors
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid input data',
+          errors: errors.array()
+        });
       }
 
       const { email, password } = req.body;
