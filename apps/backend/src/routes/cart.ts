@@ -113,19 +113,38 @@ router.post(
         }
       }
 
-      // Add item to cart
-      const cartItem = await prisma.cartItem.create({
-        data: {
+      // Check if item already exists in cart
+      const existingItem = await prisma.cartItem.findFirst({
+        where: {
           cartId: cart.id,
-          productId,
-          packageId,
-          quantity
-        },
-        include: {
-          product: true,
-          package: true
+          productId: productId || undefined,
+          packageId: packageId || undefined
         }
       });
+
+      let cartItem;
+      if (existingItem) {
+        // If exists, update quantity
+        cartItem = await prisma.cartItem.update({
+          where: { id: existingItem.id },
+          data: { quantity: existingItem.quantity + quantity },
+          include: { product: true, package: true }
+        });
+      } else {
+        // Add item to cart
+        cartItem = await prisma.cartItem.create({
+          data: {
+            cartId: cart.id,
+            productId,
+            packageId,
+            quantity
+          },
+          include: {
+            product: true,
+            package: true
+          }
+        });
+      }
 
       res.status(201).json(cartItem);
     } catch (error) {
@@ -200,7 +219,7 @@ router.delete('/items/:id', async (req: Request<{ id: string }>, res: Response, 
       where: { id: req.params.id }
     });
 
-    res.status(204).send();
+    res.status(200).json({ success: true, id: req.params.id });
   } catch (error) {
     next(error);
   }
