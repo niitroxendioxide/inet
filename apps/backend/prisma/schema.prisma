@@ -30,6 +30,7 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+// Base Product model with common fields
 model Product {
   id          String      @id @default(cuid())
   name        String
@@ -40,6 +41,90 @@ model Product {
   cartItems   CartItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  // Relations to specific product types
+  flight      Flight?
+  hotel       Hotel?
+  excursion   Excursion?
+  transport   Transport?
+}
+
+// Flight specific model
+model Flight {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Flight specific fields
+  from        String
+  to          String
+  departure   String   // Time
+  arrival     String   // Time
+  duration    String
+  class       String   @default("Económica")
+  stops       String   @default("Directo")
+  airline     String?
+  flightNumber String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Hotel specific model
+model Hotel {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Hotel specific fields
+  location    String
+  rating      Float?
+  reviews     Int      @default(0)
+  amenities   String[] // Array of amenities
+  checkIn     String?  // Time
+  checkOut    String?  // Time
+  rooms       Int?
+  stars       Int?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Excursion/Experience specific model
+model Excursion {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Excursion specific fields
+  location    String
+  category    String   @default("Excursión")
+  duration    String?
+  maxGroupSize Int?
+  difficulty  String?
+  includes    String[] // What's included
+  requirements String[] // Requirements
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Transport specific model
+model Transport {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Transport specific fields
+  vehicleType String   // Car, Bus, Train, etc.
+  capacity    Int?
+  pickupLocation String?
+  dropoffLocation String?
+  duration    String?
+  includes    String[] // What's included (fuel, driver, etc.)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Package {
