@@ -58,7 +58,7 @@ travel-platform/
 
 ### Production
 ```bash
-pnpm install --frozen-lockfile; pnpm run build
+pnpm install --frozen-lockfile   && pnpm prisma:generate && pnpm prisma:migrate:dev && pnpm run build
 pnpm run start
 ```
 2. The API will be available at `http://localhost:3000`
