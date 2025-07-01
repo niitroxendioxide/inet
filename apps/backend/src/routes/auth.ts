@@ -29,15 +29,16 @@ router.post(
   ],
   async (req: Request<{}, {}, RegisterRequest>, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        // Return detailed validation errors
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid input data',
-          errors: errors.array()
-        });
-      }
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+    res.status(400).json({
+      status: 'error',
+      message: 'Invalid input data',
+      errors: errors.array()
+    });
+    return;
+  }
+
 
       const { email, password, name } = req.body;
 
@@ -97,13 +98,14 @@ router.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        // Return detailed validation errors
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid input data',
-          errors: errors.array()
-        });
-      }
+  res.status(400).json({
+    status: 'error',
+    message: 'Invalid input data',
+    errors: errors.array()
+  });
+  return; // optional, just to be explicit
+}
+
 
       const { email, password } = req.body;
 
