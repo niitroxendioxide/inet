@@ -45,7 +45,6 @@ travel-platform/
 
 3. Initialize the database:
    ```bash
-   cd apps/backend
    pnpm prisma:generate
    pnpm prisma:migrate:dev
    ```
