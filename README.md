@@ -39,6 +39,7 @@ travel-platform/
    ```
 
 2. Set up environment variables:
+   - cd apps/backend  
    - Copy `.env.example` to `.env` in the backend directory
    - Update the database connection string and JWT secret
 
@@ -46,7 +47,7 @@ travel-platform/
    ```bash
    cd apps/backend
    pnpm prisma:generate
-   pnpm prisma:migrate
+   pnpm prisma:migrate:dev
    ```
 
 ### Development
@@ -56,7 +57,14 @@ travel-platform/
    pnpm dev
    ```
 
+### Production
+```bash
+pnpm install --frozen-lockfile; pnpm run build
+pnpm run start
+```
 2. The API will be available at `http://localhost:3000`
+
+
 
 ## 🔑 API Endpoints
 
