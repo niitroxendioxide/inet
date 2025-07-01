@@ -12,6 +12,7 @@ import { flightsRouter } from './routes/flights';
 import { hotelsRouter } from './routes/hotels';
 import { transportRouter } from './routes/transport';
 import { experiencesRouter } from './routes/experiences';
+import { dashboardRouter } from './routes/dashboard';
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/flights', flightsRouter);
 app.use('/api/hotels', hotelsRouter);
 app.use('/api/transport', transportRouter);
 app.use('/api/experiences', experiencesRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 // Error handling
 app.use(errorHandler);

@@ -19,6 +19,12 @@ enum ProductType {
   TRANSPORT
 }
 
+enum CartStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -98,7 +104,7 @@ model Excursion {
   
   // Excursion specific fields
   location    String
-  category    String   @default("Excursión")
+  category    String   @default("Excursion")
   duration    String?
   maxGroupSize Int?
   difficulty  String?
@@ -142,6 +148,7 @@ model Cart {
   id        String     @id @default(cuid())
   userId    String
   user      User       @relation(fields: [userId], references: [id])
+  status    CartStatus @default(PENDING)
   items     CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -156,6 +163,7 @@ model CartItem {
   packageId String?
   package   Package? @relation(fields: [packageId], references: [id])
   quantity  Int      @default(1)
+  price     Float    @default(0)// Price at the time of adding to cart
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 } 

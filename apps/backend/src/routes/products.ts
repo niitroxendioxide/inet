@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { PrismaClient, ProductType } from '@prisma/client';
 import { body, validationResult } from 'express-validator';
-import { requireAdmin } from '../middleware/auth';
+import { authenticateJWT, requireAdmin } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
 
 const router = Router();
@@ -21,15 +21,30 @@ interface UpdateProductRequest {
   type?: ProductType;
 }
 
-// Get all products
-router.get('/', async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+// Get all products with optional type filter
+router.get('/', authenticateJWT, async (req, res) => {
   try {
-    const products = await prisma.product.findMany({
-      orderBy: { createdAt: 'desc' }
+    const { product_type } = req.query;
+    
+    const where = product_type ? {
+      type: product_type.toString().toUpperCase() as ProductType
+    } : {};
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.product.count({ where })
+    ]);
+
+    res.json({
+      data: products,
+      total
     });
-    res.json(products);
   } catch (error) {
-    next(error);
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
 
@@ -53,6 +68,7 @@ router.get('/:id', async (req: Request<{ id: string }>, res: Response, next: Nex
 // Create product (Admin only)
 router.post(
   '/',
+  authenticateJWT,
   requireAdmin,
   [
     body('name').notEmpty().trim(),
@@ -88,6 +104,7 @@ router.post(
 // Update product (Admin only)
 router.put(
   '/:id',
+  authenticateJWT,
   requireAdmin,
   [
     body('name').optional().notEmpty().trim(),
@@ -125,7 +142,7 @@ router.put(
 );
 
 // Delete product (Admin only)
-router.delete('/:id', requireAdmin, async (req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> => {
+router.delete('/:id', authenticateJWT, requireAdmin, async (req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> => {
   try {
     await prisma.product.delete({
       where: { id: req.params.id }

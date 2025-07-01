@@ -108,6 +108,20 @@ Content-Type: application/json
 }
 ```
 
+#### Get Current User Profile
+```http
+GET /api/auth/profile
+Authorization: Bearer <token>
+
+Response:
+{
+  "id": "user-id",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "role": "ADMIN"
+}
+```
+
 ## Products API
 
 ### Endpoints
@@ -116,6 +130,31 @@ Content-Type: application/json
 ```http
 GET /api/products
 Authorization: Bearer <token>
+```
+
+#### Get Products with Filters
+```http
+GET /api/products?product_type=flight
+Authorization: Bearer <token>
+
+Query Parameters:
+- product_type: (optional) Filter by product type (flight | hotel | transport | experience)
+
+Response:
+{
+  "data": [
+    {
+      "id": "product-id",
+      "name": "Flight to Paris",
+      "description": "Direct flight to Paris",
+      "price": 500.00,
+      "type": "FLIGHT",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "total": 1
+}
 ```
 
 #### Get Product by ID
@@ -244,6 +283,45 @@ Content-Type: application/json
 DELETE /api/cart/items/:id
 Authorization: Bearer <token>
 ```
+
+## Dashboard API
+
+### Endpoints
+
+#### Get Dashboard Statistics
+```http
+GET /api/dashboard/stats
+Authorization: Bearer <token>
+Role Required: ADMIN
+
+Response:
+{
+  "products": {
+    "total": 100,
+    "byType": {
+      "flight": 30,
+      "hotel": 40,
+      "transport": 20,
+      "experience": 10
+    }
+  },
+  "packages": {
+    "total": 25,
+    "activeCount": 20
+  },
+  "orders": {
+    "total": 150,
+    "lastMonth": 50,
+    "totalRevenue": 75000.00,
+    "lastMonthRevenue": 25000.00
+  }
+}
+```
+
+This endpoint provides aggregated statistics for administrators including:
+- Product counts (total and by type)
+- Package statistics
+- Order and revenue metrics
 
 ## Error Handling
 

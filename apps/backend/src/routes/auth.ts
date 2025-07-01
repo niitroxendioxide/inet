@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import { AppError } from '../middleware/errorHandler';
+import { authenticateJWT } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -18,6 +19,39 @@ interface LoginRequest {
   email: string;
   password: string;
 }
+
+// Get current user profile
+router.get('/profile', authenticateJWT, async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new AppError(401, 'Not authenticated');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
+
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Register new user
 router.post(

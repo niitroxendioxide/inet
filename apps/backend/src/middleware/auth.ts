@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { PrismaClient, UserRole } from '@prisma/client';
+import { AppError } from './errorHandler';
 
 const prisma = new PrismaClient();
 
@@ -26,8 +27,7 @@ export const authenticateJWT = async (
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      res.status(401).json({ message: 'No token provided' });
-      return;
+      throw new AppError(401, 'No token provided');
     }
 
     const token = authHeader.split(' ')[1];
@@ -45,14 +45,17 @@ export const authenticateJWT = async (
     });
 
     if (!user) {
-      res.status(401).json({ message: 'User no longer exists' });
-      return;
+      throw new AppError(401, 'User no longer exists');
     }
 
     req.user = payload;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    if (error instanceof jwt.JsonWebTokenError) {
+      next(new AppError(401, 'Invalid token'));
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -62,7 +65,7 @@ export const requireAdmin = (
   next: NextFunction
 ): void => {
   if (req.user?.role !== UserRole.ADMIN) {
-    res.status(403).json({ message: 'Admin access required' });
+    next(new AppError(403, 'Admin access required'));
     return;
   }
   next();

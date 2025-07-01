@@ -175,6 +175,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoggedIn(false);
     setUserEmail(null);
     localStorage.removeItem('travelAuth');
+    localStorage.removeItem('travelToken');
     setItems([]);
   };
 

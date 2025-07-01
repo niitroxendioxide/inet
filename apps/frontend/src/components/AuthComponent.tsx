@@ -106,6 +106,7 @@ const AuthComponent = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('travelToken');
     logout();
   };
 
@@ -130,7 +131,7 @@ const AuthComponent = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <Tabs value={tab} onValueChange={(value) => setTab(value as "login" | "register")} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
             <TabsTrigger value="register">Registrarse</TabsTrigger>
