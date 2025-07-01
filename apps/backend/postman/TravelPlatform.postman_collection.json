@@ -1,0 +1,451 @@
+{
+	"info": {
+		"_postman_id": "e9b3c8a1-5c1f-4b8b-8d8a-9f9f9f9f9f9f",
+		"name": "Travel Platform API",
+		"description": "Collection for testing the Travel Platform API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"name\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user in the system"
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.environment.set(\"authToken\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login to get authentication token"
+					}
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Get all available products"
+					}
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Product ID"
+								}
+							]
+						},
+						"description": "Get a specific product by its ID"
+					}
+				},
+				{
+					"name": "Create Product (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Flight to Paris\",\n    \"description\": \"Direct flight to Paris\",\n    \"price\": 500.00,\n    \"type\": \"FLIGHT\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Create a new product (Admin only)"
+					}
+				},
+				{
+					"name": "Update Product (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Flight to Paris\",\n    \"price\": 550.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Product ID"
+								}
+							]
+						},
+						"description": "Update an existing product (Admin only)"
+					}
+				},
+				{
+					"name": "Delete Product (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Product ID"
+								}
+							]
+						},
+						"description": "Delete a product (Admin only)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Packages",
+			"item": [
+				{
+					"name": "Get All Packages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/packages",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "packages"]
+						},
+						"description": "Get all available packages"
+					}
+				},
+				{
+					"name": "Get Package by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/packages/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "packages", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Package ID"
+								}
+							]
+						},
+						"description": "Get a specific package by its ID"
+					}
+				},
+				{
+					"name": "Create Package (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Paris Adventure\",\n    \"description\": \"Complete Paris travel package\",\n    \"price\": 1200.00,\n    \"productIds\": [\"product1-id\", \"product2-id\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/packages",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "packages"]
+						},
+						"description": "Create a new package (Admin only)"
+					}
+				},
+				{
+					"name": "Update Package (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Paris Adventure\",\n    \"price\": 1300.00,\n    \"productIds\": [\"product1-id\", \"product3-id\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/packages/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "packages", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Package ID"
+								}
+							]
+						},
+						"description": "Update an existing package (Admin only)"
+					}
+				},
+				{
+					"name": "Delete Package (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/packages/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "packages", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Package ID"
+								}
+							]
+						},
+						"description": "Delete a package (Admin only)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get User's Cart",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart"]
+						},
+						"description": "Get the current user's shopping cart"
+					}
+				},
+				{
+					"name": "Add Item to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"product-id\",\n    \"quantity\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/items",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "items"]
+						},
+						"description": "Add a product or package to the cart"
+					}
+				},
+				{
+					"name": "Update Cart Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/items/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "items", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Cart Item ID"
+								}
+							]
+						},
+						"description": "Update the quantity of an item in the cart"
+					}
+				},
+				{
+					"name": "Remove Item from Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/items/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "items", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Cart Item ID"
+								}
+							]
+						},
+						"description": "Remove an item from the cart"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+} 
